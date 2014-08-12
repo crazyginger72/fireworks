@@ -15,20 +15,63 @@ local colours_list = {
 	{"blue",    "Blue"},
 	{"purple",  "Purple"},
 	{"orange",  "Orange"},
-	{"yellow",  "Yellow"}, 
+	{"yellow",  "Yellow"},
+	{"white",   ""} ,
  }
 
 for i in ipairs(colours_list) do
 	local colour = colours_list[i][1]
 	local desc = colours_list[i][2]
+
+	if colour == "white" then 
+		minetest.register_node("fireworks:white", {
+			drawtype = "plantlike",
+			tiles = {"fireworks_"..colour..".png"},
+			light_source = 14,
+			visual_scale = 2,
+			sunlight_propagates = true,
+			walkable = false,
+			is_ground_content = true,
+			pointable = false,
+			groups = {cracky=3,not_in_creative_inventory=1, falling_node=1},
+			sounds = default.node_sound_stone_defaults(),
+		})
+
+		minetest.register_abm({
+			nodenames = {"fireworks:white"},
+			interval =2,
+			chance = 2,	
+			
+			action = function(pos, node, active_object_count, active_object_count_wider)
+				if node.name == "fireworks:white" then
+					minetest.remove_node(pos,{name="fireworks:white"})  
+				end
+			end
+		})
+
+		return
+	end
+
 	minetest.register_abm({
 		nodenames = {"fireworks:"..colour},
-		interval = pr:next(6,11),
+		interval = 2,
 		chance = 1,	
 			
 		action = function(pos, node, active_object_count, active_object_count_wider)
 			if node.name == "fireworks:"..colour then
-				minetest.env:remove_node(pos,{name="fireworks:"..colour})  
+				minetest.add_node(pos,{name="fireworks:2"..colour})  
+			end
+		end
+	})
+
+	minetest.register_abm({
+		nodenames = {"fireworks:2"..colour},
+		interval = 1,
+		chance = 2,	
+			
+		action = function(pos, node, active_object_count, active_object_count_wider)
+			if node.name == "fireworks:2"..colour then
+				minetest.remove_node(pos,{name="fireworks:2"..colour})  
 			end
 		end
 	})
@@ -39,15 +82,14 @@ for i in ipairs(colours_list) do
 		is_ground_content = true,
 		groups = {cracky=3},
 		sounds = default.node_sound_stone_defaults(),
-		mesecons = {effector = {
-		action_on = function(pos, node)
+		mesecons = {effector = { action_on = function(pos, node)
 			local f_colour = colour
 			fireworks_activate(pos, node, f_colour)
-		end
-	}},
-	on_rightclick = function(pos, node, clicker)
-		local f_colour = colour
-		fireworks_activate(pos, node, f_colour)
+			end}},
+
+		on_rightclick = function(pos, node, clicker)
+			local f_colour = colour
+			fireworks_activate(pos, node, f_colour)
 	 	end	
 	})
 
@@ -60,7 +102,20 @@ for i in ipairs(colours_list) do
 		walkable = false,
 		is_ground_content = true,
 		pointable = false,
-		groups = {cracky=3,not_in_creative_inventory=1},
+		groups = {cracky=3,not_in_creative_inventory=1},--, hot=1, igniter=3}, --<<<<to enable fire
+		sounds = default.node_sound_stone_defaults(),
+	})
+
+	minetest.register_node("fireworks:2"..colour, {
+		drawtype = "plantlike",
+		description = desc,
+		tiles = {"fireworks_"..colour..".png"},
+		light_source = 14,
+		sunlight_propagates = true,
+		walkable = false,
+		is_ground_content = true,
+		pointable = false,
+		groups = {cracky=3,not_in_creative_inventory=1},--, hot=1, igniter=3}, --<<<<to enable fire
 		sounds = default.node_sound_stone_defaults(),
 	})
 
@@ -84,20 +139,29 @@ for i in ipairs(colours_list) do
 	function fireworks_activate (pos, node, f_colour)
 	local zrand = pr:next(-5, 5)
 	local xrand = pr:next(-5,5)
-	local yrand = pr:next(15, 30)
-	--play_sound(fireworks, 1)
+	local yrand = pr:next(25, 40)
+	minetest.sound_play("FireworkCombo44q5", {
+		pos={x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},
+		max_hear_distance = 90,
+		gain = 3,
+	})
+
+	minetest.add_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},{name='fireworks:white'}) 
 	if node.name == "fireworks:firework_"..f_colour then
-		local radius = pr:next(3,6)
+		local radius = pr:next(5,8)
 			for x=-radius,radius do
 			for y=-radius,radius do
 			for z=-radius,radius do
-		   		if x*x+y*y+z*z <= radius*radius then
-		    		minetest.env:add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
+				local w = radius/2+5
+		   		if x*x+y*y+z*z <= radius*radius and  x*x+y*y+z*z >= radius*radius-w then
+		   			if minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "air" then
+		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
+		    		end
 				end
 			end
 			end
 			end
-			minetest.env:remove_node(pos,{name="fireworks:firework_"..colour})
+			minetest.remove_node(pos,{name="fireworks:firework_"..colour})
 		end
 	end
 end
