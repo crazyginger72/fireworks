@@ -154,8 +154,8 @@ for i in ipairs(colours_list) do
 		maxpos = {x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},
 		minvel = {x=-04, y=-04, z=-04},
  		maxvel = {x=04, y=04, z=04},
- 		minacc = {x=0, y=0, z=0},
-  		maxacc = {x=0, y=0, z=0},
+ 		minacc = {x=0, y=-0.2, z=0},
+  		maxacc = {x=0, y=-0.6, z=0},
   		minexptime = 1,
   		maxexptime = 2.5,
   		minsize = 1,
@@ -173,23 +173,23 @@ for i in ipairs(colours_list) do
 		   		if x*x+y*y+z*z <= radius*radius and  x*x+y*y+z*z >= radius*radius-w then
 		   			if minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "air" 
 		   			or minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "ignore" then
-		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
-		    			minetest.add_particle({
+		    		--	minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
+		    		--[[	minetest.add_particle({
     						pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
-    						vel = {x=-0.01, y=-0.2, z=-0.01},
+    						vel = {x=0, y=o, z=0},
     						acc = {x=0, y=-0.5, z=0},
-    						expirationtime = math.random(4, 8),
+    						expirationtime = math.random(2, 8),
     						size = math.random(3, 6),
     						collisiondetection = false,
     						vertical = false,
     						texture = "fireworks_"..f_colour..".png"
-					})
+					})]]--
 		    		end
 				end
 			end
 			end
 			end
-		--	minetest.remove_node(pos,{name="fireworks:firework_"..colour})
+			minetest.remove_node(pos,{name="fireworks:firework_"..colour})
 		end
 	end
 end
