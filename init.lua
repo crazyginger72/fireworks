@@ -7,7 +7,6 @@
 
 --Sound will be added soon
 
-local pr = PseudoRandom(1562425)
 local colours_list = {
 	{"rainbow", "Rainbow"},
 	{"red",     "Red"},
@@ -137,26 +136,54 @@ for i in ipairs(colours_list) do
 	end
 
 	function fireworks_activate (pos, node, f_colour)
-	local zrand = pr:next(-5, 5)
-	local xrand = pr:next(-5,5)
-	local yrand = pr:next(25, 40)
+	local zrand = math.random(-5, 5)
+	local xrand = math.random(-5,5)
+	local yrand = math.random(25, 40)
 	minetest.sound_play("FireworkCombo44q5", {
 		pos={x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},
 		max_hear_distance = 90,
 		gain = 3,
 	})
-
-	minetest.add_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},{name='fireworks:white'}) 
+	if minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name ~= "air" 
+	and minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name ~= "ignore" then return end
+	minetest.add_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},{name='fireworks:white'})
+	minetest.add_particlespawner({
+		amount = 30,
+		time = 1,
+		minpos = {x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},
+		maxpos = {x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},
+		minvel = {x=-04, y=-04, z=-04},
+ 		maxvel = {x=04, y=04, z=04},
+ 		minacc = {x=0, y=0, z=0},
+  		maxacc = {x=0, y=0, z=0},
+  		minexptime = 1,
+  		maxexptime = 4,
+  		minsize = 1,
+ 		maxsize = 5,
+ 		collisiondetection = false,
+  		vertical = false,
+  		texture = "fireworks_yellow.png",
+	})
 	if node.name == "fireworks:firework_"..f_colour then
-		local radius = pr:next(5,8)
+		local radius = math.random(5,8)
 			for x=-radius,radius do
 			for y=-radius,radius do
 			for z=-radius,radius do
 				local w = radius/2+5
 		   		if x*x+y*y+z*z <= radius*radius and  x*x+y*y+z*z >= radius*radius-w then
 		   			if minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "air" 
-		   			or minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "air" then
+		   			or minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "ignore" then
 		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
+		    			minetest.add_particle({
+    						pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
+    						vel = {x=-0.01, y=-0.2, z=-0.01},
+    						acc = {x=0, y=0.5, z=0},
+    						expirationtime = math.random(4, 8),
+    						size = math.random(3, 6),
+    						collisiondetection = false,
+    						vertical = false,
+    						texture = "firework_"..f_colour..".png"
+					})
 		    		end
 				end
 			end
