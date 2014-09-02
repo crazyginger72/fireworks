@@ -157,7 +157,7 @@ for i in ipairs(colours_list) do
  		minacc = {x=0, y=0, z=0},
   		maxacc = {x=0, y=0, z=0},
   		minexptime = 1,
-  		maxexptime = 4,
+  		maxexptime = 2.5,
   		minsize = 1,
  		maxsize = 5,
  		collisiondetection = false,
@@ -176,13 +176,13 @@ for i in ipairs(colours_list) do
 		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name='fireworks:'..f_colour}) 
 		    			minetest.add_particle({
     						pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
-    						vel = {x=-0.01, y=-0.2, z=-0.01},
+    						vel = {x=-0.01, y=0.2, z=-0.01},
     						acc = {x=0, y=0.5, z=0},
     						expirationtime = math.random(4, 8),
     						size = math.random(3, 6),
     						collisiondetection = false,
     						vertical = false,
-    						texture = "firework_"..f_colour..".png"
+    						texture = "fireworks_"..f_colour..".png"
 					})
 		    		end
 				end
