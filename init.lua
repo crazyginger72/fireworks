@@ -25,9 +25,8 @@ for i in ipairs(colours_list) do
 	if colour == "white" then 
 		minetest.register_node("fireworks:white", {
 			drawtype = "airlike",
-			--tiles = {"fireworks_"..colour..".png"},
 			light_source = 14,
-			--visual_scale = 2,
+			buildable_to = true,
 			sunlight_propagates = true,
 			walkable = false,
 			is_ground_content = false,
@@ -38,7 +37,7 @@ for i in ipairs(colours_list) do
 
 		minetest.register_abm({
 			nodenames = {"fireworks:white"},
-			interval =12,
+			interval =20,
 			chance = 1,	
 			
 			action = function(pos, node, active_object_count, active_object_count_wider)
@@ -120,9 +119,8 @@ for i in ipairs(colours_list) do
 		max_hear_distance = 90,
 		gain = 3,
 	})
-	if minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name ~= "air" 
-	and minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name ~= "fireworks:white"
-	and minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name ~= "ignore" then return end
+	if minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name == "air" 
+	or minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name == "fireworks:white" then
 	minetest.remove_node(pos,{name="fireworks:firework_"..colour})
 	minetest.add_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand},{name='fireworks:white'})
 	minetest.add_particlespawner({
@@ -140,8 +138,9 @@ for i in ipairs(colours_list) do
  		maxsize = 5,
  		collisiondetection = false,
   		vertical = false,
-  		texture = "fireworks_yellow.png",
+  		texture = "fireworks_white.png",
 	})
+	end
 	if node.name == "fireworks:firework_"..f_colour then
 		local radius = math.random(5,8)
 			for x=-radius,radius do
@@ -149,21 +148,34 @@ for i in ipairs(colours_list) do
 			for z=-radius,radius do
 				local w = radius/2+5
 		   		if x*x+y*y+z*z <= radius*radius then
-		   			if minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "air" 
-		   			or minetest.get_node({x=pos.x+xrand,y=pos.y+yrand,z=pos.z+zrand}).name == "fireworks:white"
-		   			or minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand}).name == "ignore" then
-		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},{name="fireworks:white"}) 
-		    			if x*x+y*y+z*z >= radius*radius-w then
-		    				minetest.add_particle({
-    							pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
-    							vel = {x=0, y=0, z=0},
-    							acc = {x=0, y=-0.5, z=0},
-    							expirationtime = math.random((radius/3)+(yrand/6), (radius/3)+(yrand/6)-4) ,
-    							size = math.random(3, 6),
-    							collisiondetection = false,
-    							vertical = false,
-    							texture = "fireworks_"..f_colour..".png"
-						})
+		   			if minetest.get_node({x=pos.x+x+xrand,y=pos.y+y+yrand-1,z=pos.z+z+zrand}).name == "air" then
+		    			minetest.add_node({x=pos.x+x+xrand,y=pos.y+y+yrand-1,z=pos.z+z+zrand},{name="fireworks:white"}) 
+		    			if x*x+y*y+z*z >= radius*radius-w and math.random(1, 10) <= 7 then
+		    				if node.name == "fireworks:firework_rainbow" then 
+							local r_colour = colours_list[math.random(2,7)][1]
+							minetest.add_particle({
+    								pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
+    								vel = {x=0, y=0, z=0},
+    								acc = {x=0, y=-0.2, z=0},
+    								expirationtime = math.random((radius/3)+(yrand/6)+2, (radius/3)+(yrand/6)-4) ,
+    								size = math.random(3, 6),
+    								collisiondetection = false,
+    								vertical = false,
+    								texture = "fireworks_"..r_colour..".png"
+							})
+						else
+							local r_colour = colours_list[math.random(2,7)][1]
+							minetest.add_particle({
+    								pos = {x=pos.x+x+xrand,y=pos.y+y+yrand,z=pos.z+z+zrand},
+    								vel = {x=0, y=0, z=0},
+    								acc = {x=0, y=-0.2, z=0},
+    								expirationtime = math.random((radius/3)+(yrand/6)+2, (radius/3)+(yrand/6)-4) ,
+    								size = math.random(3, 6),
+    								collisiondetection = false,
+    								vertical = false,
+    								texture = "fireworks_"..f_colour..".png"
+							})
+						end
 		    			end
 		    		end
 				end
@@ -174,4 +186,4 @@ for i in ipairs(colours_list) do
 	end
 end
 
-print("Fireworks Mod Loaded v2.0!")
+print("Fireworks Mod Loaded v3.0!")
