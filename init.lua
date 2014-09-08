@@ -31,8 +31,7 @@ for i in ipairs(colours_list) do
 			walkable = false,
 			is_ground_content = false,
 			pointable = false,
-			groups = {cracky=3,not_in_creative_inventory=1, falling_node=1},
-			sounds = default.node_sound_stone_defaults(),
+			groups = {not_in_creative_inventory=1},
 		})
 
 		minetest.register_abm({
@@ -68,19 +67,6 @@ for i in ipairs(colours_list) do
 	})
 
 	minetest.register_node("fireworks:"..colour, {
-		drawtype = "plantlike",
-		description = desc,
-		tiles = {"fireworks_"..colour..".png"},
-		light_source = 14,
-		sunlight_propagates = true,
-		walkable = false,
-		is_ground_content = true,
-		pointable = false,
-		groups = {cracky=3,not_in_creative_inventory=1},--, hot=1, igniter=3}, --<<<<to enable fire
-		sounds = default.node_sound_stone_defaults(),
-	})
-
-	minetest.register_node("fireworks:2"..colour, {
 		drawtype = "plantlike",
 		description = desc,
 		tiles = {"fireworks_"..colour..".png"},
